@@ -1,21 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sjdp.dronesnap" >
-
+    <!-- The icon is used under the CC license. Found at: -->
+    <!-- https://thenounproject.com/term/drone/124837/-->
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/drone_snap_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <uses-permission android:name="android.permission.CAMERA" />
         <activity
             android:name=".DroneSnapStartScreenActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ServerSettingsActivity"
+            android:label="@string/title_activity_server_settings"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".DroneSnapStartScreenActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sjdp.dronesnap.DroneSnapStartScreenActivity" />
+        </activity>
+        <activity
+            android:name=".SnappingActivity"
+            android:label="@string/title_activity_snapping"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".DroneSnapStartScreenActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sjdp.dronesnap.DroneSnapStartScreenActivity" />
+        </activity>
     </application>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
+
+    <uses-feature android:name="android.hardware.Camera" />
+    <!--<uses-feature android:name="android.hardware.camera.autofocus" />-->
 
 </manifest>

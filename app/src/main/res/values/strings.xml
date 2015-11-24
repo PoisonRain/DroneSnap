@@ -1,6 +1,43 @@
 <resources>
     <string name="app_name">DroneSnap</string>
+    <string name="intent_extra_flight_name">flight_name</string>
+    <string name="intent_extra_delayed_start">delayed_start</string>
+    <string name="intent_extra_time_lapse">time_lapse</string>
+    <string name="intent_extra_flight_duration">flight_duration</string>
+    <string name="intent_extra_snap_count">snap_count</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="shared_pref_url">serverURL</string>
+    <string name="shared_pref_username">serverUsername</string>
+    <string name="shared_pref_password">serverPassword</string>
+    
+    <!-- Main Activity-->
+    <string name="start_screen_logo">Ðґ◎ηℯ$ηα℘</string>
     <string name="action_settings">Settings</string>
+
+    <string name="flight_name_etLabel">Flight Name</string>
+    <string name="delayed_start_etLabel">Delayed Start (min)</string>
+    <string name="time_lapse_etLabel">Time Lapse (milli)</string>
+
+    <string name="start_btn">Start</string>
+    <string name="server_settings_btn">Server Settings</string>
+    
+
+
+    <!-- Server Settings Activity-->
+    <string name="server_setting_logo">Server Settings</string>
+    <string name="title_activity_server_settings">Server Settings</string>
+    <string name="url_etLabel">URL</string>
+    <string name="username_etLabel">Username</string>
+    <string name="password_etLabel">Password</string>
+
+    <string name="server_settings_okay_btn">Okay</string>
+    <string name="title_activity_snapping">SnappingActivity</string>
+
+    <!-- Snapping Activity-->
+    <string name="snapping_logo">Snap Stats</string>
+    <string name="snapping_stat_num_of_snaps">Number of Snaps taken:</string>
+    <string name="snapping_stat_flight_dura">Flight Duration:</string>
+    <string name="pause_btn">Pause</string>
+    <string name="stop_btn">Stop</string>
+
 </resources>

@@ -4,81 +4,78 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".DroneSnapStartScreenActivity"
+    tools:context="sjdp.dronesnap.SnappingActivity"
     android:orientation="vertical"
     android:measureWithLargestChild="false"
     android:layout_gravity="center_vertical">
 
-    <TextView android:text="@string/start_screen_logo"
+    <TextView android:text="@string/snapping_logo"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="71dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="100dp"
         android:id="@+id/logo_tv"
-        android:textSize="60sp"
-        android:layout_weight="1"
+        android:textSize="40sp"
         android:textAlignment="center"
         android:layout_gravity="center_vertical|center"/>
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <View
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/flight_name_etLabel"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/flight_name_et"
-            android:singleLine="true"/>
-    </LinearLayout>
+        android:layout_height="2dip"
+        android:background="#CCC" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="15sp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/delayed_start_etLabel"/>
-        <EditText
-            android:layout_width="match_parent"
+            android:textSize="20sp"
+            android:text="@string/snapping_stat_num_of_snaps"/>
+        <TextView
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/delayed_start_et"
-            android:singleLine="true"
-            android:inputType="number"
-            android:maxLength="2"/>
+            android:textSize="20sp"
+            android:id="@+id/stat_num_of_snaps"
+            android:gravity="right"/>
     </LinearLayout>
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="15sp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/time_lapse_etLabel"/>
-        <EditText
-            android:layout_width="match_parent"
+            android:textSize="20sp"
+            android:text="@string/snapping_stat_flight_dura"/>
+        <Chronometer
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/time_lapse_et"
-            android:singleLine="true"
-            android:inputType="number"
-            android:maxLength="4"/>
+            android:textSize="20sp"
+            android:id="@+id/stat_flight_duration"
+            android:gravity="right"/>
     </LinearLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/start_btn"
-        android:id="@+id/start_btn"
+        android:text="@string/pause_btn"
+        android:id="@+id/pause_resume_btn"
         android:height="50dp"
         android:layout_gravity="bottom" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/server_settings_btn"
-        android:id="@+id/server_settings_btn" />
+        android:text="@string/stop_btn"
+        android:id="@+id/stop_btn"
+        android:height="50dp"
+        android:layout_gravity="bottom" />
 </LinearLayout>

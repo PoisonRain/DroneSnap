@@ -4,21 +4,22 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".DroneSnapStartScreenActivity"
+    tools:context="sjdp.dronesnap.ServerSettingsActivity"
     android:orientation="vertical"
     android:measureWithLargestChild="false"
     android:layout_gravity="center_vertical">
 
-    <TextView android:text="@string/start_screen_logo"
+    <TextView android:text="@string/server_setting_logo"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginTop="71dp"
         android:id="@+id/logo_tv"
-        android:textSize="60sp"
+        android:textSize="50sp"
         android:layout_weight="1"
         android:textAlignment="center"
         android:layout_gravity="center_vertical|center"/>
 
+    <!-- URL-->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
@@ -26,14 +27,32 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/flight_name_etLabel"/>
+            android:text="@string/url_etLabel"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/flight_name_et"
+            android:id="@+id/server_url_et"
+            android:singleLine="true"
+            android:inputType="textUri"/>
+    </LinearLayout>
+
+    <!-- Username-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/username_etLabel"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/server_username_et"
             android:singleLine="true"/>
     </LinearLayout>
 
+    <!--Password-->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
@@ -41,44 +60,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/delayed_start_etLabel"/>
+            android:text="@string/password_etLabel"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/delayed_start_et"
+            android:id="@+id/server_password_et"
             android:singleLine="true"
-            android:inputType="number"
-            android:maxLength="2"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/time_lapse_etLabel"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/time_lapse_et"
-            android:singleLine="true"
-            android:inputType="number"
-            android:maxLength="4"/>
+            android:inputType="textPassword"/>
     </LinearLayout>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/start_btn"
-        android:id="@+id/start_btn"
+        android:text="@string/server_settings_okay_btn"
+        android:id="@+id/okay_btn"
         android:height="50dp"
         android:layout_gravity="bottom" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/server_settings_btn"
-        android:id="@+id/server_settings_btn" />
 </LinearLayout>
