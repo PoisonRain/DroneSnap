@@ -12,7 +12,7 @@
     <TextView android:text="@string/snapping_logo"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:id="@+id/logo_tv"
         android:textSize="40sp"
         android:textAlignment="center"
@@ -57,6 +57,11 @@
             android:id="@+id/stat_flight_duration"
             android:gravity="right"/>
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"></FrameLayout>
 
     <View
         android:layout_width="wrap_content"

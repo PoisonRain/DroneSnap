@@ -15,6 +15,9 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Created by Samuel Poulton on 11/21/15.
+ */
 public class DroneSnapStartScreenActivity extends Activity {
 
     private Resources mRes = null;
@@ -24,8 +27,8 @@ public class DroneSnapStartScreenActivity extends Activity {
     private Button mStartBtn = null;
     private Button mServerSettingsBtn = null;
 
-    static final private String DEFAULT_DELAY = "1";
-    static final private String DEFAULT_LAPSE = "1000";
+    static final private String DEFAULT_DELAY = "0";
+    static final private String DEFAULT_LAPSE = "4000";
     static final private int SNAP_STATS_REQUEST_CODE = 1;
 
     @Override
