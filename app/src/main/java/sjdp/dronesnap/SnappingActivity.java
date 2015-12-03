@@ -1,9 +1,12 @@
 package sjdp.dronesnap;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.hardware.Camera;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -13,6 +16,7 @@ import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 /**
  * Created by Samuel Poulton on 11/21/15.
@@ -97,8 +101,18 @@ public class SnappingActivity extends Activity implements OnClickListener{
                 e.printStackTrace();
             }
         }
+    }
 
+    private void resumeSnapping(){
+        Log.d(LOG_TAG, "resumeSnapping");
+        mPauseResumeBtn.setText(mRes.getString(R.string.pause_btn));
+
+        if(mCamera == null)
+            mCamera = setCameraInstance();
+        isSnapping = true;
         startCameraSnappingThread();
+
+        mFlightDuraChrono.setBase(SystemClock.elapsedRealtime() - mDurationOfFlight);
         mFlightDuraChrono.start();
     }
 
@@ -114,19 +128,6 @@ public class SnappingActivity extends Activity implements OnClickListener{
             mCamera.release();
             mCamera = null;
         }
-    }
-
-    private void resumeSnapping(){
-        Log.d(LOG_TAG, "resumeSnapping");
-
-        mFlightDuraChrono.setBase(SystemClock.elapsedRealtime() - mDurationOfFlight);
-        mFlightDuraChrono.start();
-
-        mPauseResumeBtn.setText(mRes.getString(R.string.pause_btn));
-
-        if(mCamera == null)
-            mCamera = setCameraInstance();
-        isSnapping = true;
     }
 
     private void stopSnapping(){
@@ -229,6 +230,20 @@ public class SnappingActivity extends Activity implements OnClickListener{
         };
         thread.start();
         //Once the picture thread is running, start sending the pictures!
-        mSnapDisbatcher.start();
+        if(testNetwork()) {
+            mSnapDisbatcher.start();
+        } else {
+            Toast.makeText(getApplicationContext(), "No network connection.", Toast.LENGTH_SHORT).show();
+            stopSnapping();
+        }
+    }
+
+    // ------------------------ Disbatcher functions ----------------------------------
+    private boolean testNetwork(){
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
     }
 }
