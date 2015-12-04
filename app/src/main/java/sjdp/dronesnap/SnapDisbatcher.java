@@ -16,14 +16,18 @@ import java.util.LinkedList;
 /**
  * Created by Samuel Poulton on 12/1/15.
  */
-    public class SnapDisbatcher extends Thread {
+public class SnapDisbatcher extends Thread {
     static final private String LOG_TAG = "LOG_SEE_ME";
 
     private LinkedList<byte []> snapUploadList = new LinkedList<byte[]>();
     private boolean isDisbatching = true;
     private Socket socket;
-    private static int SERVERPORT = 8150;
-    private static String SERVER_IP = "144.39.197.47";
+    private static int SERVER_PORT = 8150;
+    private static String SERVER_IP;
+
+    public SnapDisbatcher(String ip){
+        SERVER_IP = ip;
+    }
 
     private byte[] dequeueSnap() {
         return snapUploadList.poll();
@@ -39,6 +43,12 @@ import java.util.LinkedList;
 
     public void stopDisbatching(){
         isDisbatching = false;
+        try {
+            finalize();
+        } catch (Throwable th) {
+            Log.d(LOG_TAG, "The snapDisbatcher thread failed to finalize");
+            th.printStackTrace();
+        }
     }
 
     public void run(){
@@ -65,7 +75,7 @@ import java.util.LinkedList;
 //            InetAddress serverAddr = InetAddress.getLocalHost();
             InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
             Log.d(LOG_TAG, "SERVER ADDRESS: " + serverAddr.toString());
-            socket = new Socket(serverAddr, SERVERPORT);
+            socket = new Socket(serverAddr, SERVER_PORT);
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -82,8 +92,11 @@ import java.util.LinkedList;
         try {
             OutputStream out = socket.getOutputStream();
             DataOutputStream dataOut = new DataOutputStream(out);
+            Log.d(LOG_TAG, "Length of picture: " + snap.length);
             dataOut.writeInt(snap.length);
-            dataOut.write(snap,0, snap.length);
+            dataOut.write(snap, 0, snap.length);
+            Log.d(LOG_TAG, "DataOut write is complete");
+            dataOut.close();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -91,6 +104,5 @@ import java.util.LinkedList;
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }

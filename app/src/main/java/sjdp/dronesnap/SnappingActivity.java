@@ -3,11 +3,13 @@ package sjdp.dronesnap;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.hardware.Camera;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -18,11 +20,14 @@ import android.widget.TextView;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
+import java.io.FileOutputStream;
+
 /**
  * Created by Samuel Poulton on 11/21/15.
  */
 public class SnappingActivity extends Activity implements OnClickListener{
     static final private String LOG_TAG = "LOG_SEE_ME";
+    static final String PREFS_FILE = "mSharedPreferences";
 
     private int mNumberOfSnapsTaken = 0;
     private String mFlightName = "";
@@ -31,6 +36,8 @@ public class SnappingActivity extends Activity implements OnClickListener{
     private boolean isSnapping = true;
     private long mDurationOfFlight = 0;
     private Resources mRes = null;
+    private SharedPreferences mSharedPrefs = null;
+    private Thread mCameraThread = null;
     private Camera mCamera;
     private CameraPreview mPreview;
     private SnapDisbatcher mSnapDisbatcher;
@@ -46,10 +53,11 @@ public class SnappingActivity extends Activity implements OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_snapping);
         mRes = getResources();
+        mSharedPrefs = getSharedPreferences(PREFS_FILE, MODE_PRIVATE);
         inflateWidgets();
         setParentIntentExtras();
 
-        mSnapDisbatcher = new SnapDisbatcher();
+        mSnapDisbatcher = new SnapDisbatcher(mSharedPrefs.getString(mRes.getString(R.string.shared_pref_url), ""));
         mCamera = setCameraInstance();
         mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
@@ -67,6 +75,13 @@ public class SnappingActivity extends Activity implements OnClickListener{
     protected void onResume(){
         super.onResume();
         resumeSnapping();
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        if(mCameraThread.isAlive())
+            mCameraThread.interrupt();
     }
 
     @Override
@@ -185,13 +200,14 @@ public class SnappingActivity extends Activity implements OnClickListener{
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
             Log.d(LOG_TAG, "Adding picture to upload list");
+//            savePicture(data);
             mSnapDisbatcher.addSnaptoUploadList(data);
         }
     };
 
 
     private void startCameraSnappingThread(){
-        Thread thread = new Thread() {
+        mCameraThread = new Thread() {
             @Override
             public void run() {
                 super.run();
@@ -221,15 +237,16 @@ public class SnappingActivity extends Activity implements OnClickListener{
                     }
                     catch (Exception e) {
                         e.printStackTrace();
-                        Log.d(LOG_TAG, e.getMessage());
+                        Log.d(LOG_TAG, "Not sleeping very well" + e.getMessage());
                     }
 
                     Log.d(LOG_TAG, "NUMBER OF SNAPS: " + mNumberOfSnapsTaken);
                 }
             }
         };
-        thread.start();
-        //Once the picture thread is running, start sending the pictures!
+
+        mCameraThread.start();
+        //Once the picture thread is running and if the network exists, start sending the pictures!
         if(testNetwork()) {
             mSnapDisbatcher.start();
         } else {
@@ -238,12 +255,26 @@ public class SnappingActivity extends Activity implements OnClickListener{
         }
     }
 
-    // ------------------------ Disbatcher functions ----------------------------------
+    // ------------------------ Network functions ----------------------------------
     private boolean testNetwork(){
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
+    }
+
+
+    // ------------------------- TESTing FUNCTIONS ---------------------------
+    private void savePicture(byte[] snap) {
+        String storageDir = Environment.getExternalStorageDirectory().toString();
+        String filepath = storageDir + "/test.jpg";
+        try {
+            FileOutputStream outstream = new FileOutputStream(filepath);
+            outstream.write(snap, 0, snap.length);
+        } catch (Exception e) {
+
+        }
+
     }
 }

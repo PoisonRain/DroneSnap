@@ -73,7 +73,7 @@
             android:id="@+id/time_lapse_et"
             android:singleLine="true"
             android:inputType="number"
-            android:maxLength="4"/>
+            android:maxLength="6"/>
     </LinearLayout>
 
     <Button
