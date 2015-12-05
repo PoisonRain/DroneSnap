@@ -60,6 +60,7 @@ public class SnapDisbatcher extends Thread {
                 //send byte array
                 Log.d(LOG_TAG, "current number of snaps in queue: " + listLength());
                 sendByteArray(dequeueSnap());
+                restartSocket();
             } else {
                 try {
                     sleep(500);
@@ -104,5 +105,15 @@ public class SnapDisbatcher extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void restartSocket(){
+        try {
+            socket.close();
+            socket = new Socket(SERVER_IP, SERVER_PORT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

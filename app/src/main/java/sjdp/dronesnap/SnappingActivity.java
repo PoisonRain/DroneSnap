@@ -247,7 +247,7 @@ public class SnappingActivity extends Activity implements OnClickListener{
 
         mCameraThread.start();
         //Once the picture thread is running and if the network exists, start sending the pictures!
-        if(testNetwork()) {
+        if(testConnectivity()) {
             mSnapDisbatcher.start();
         } else {
             Toast.makeText(getApplicationContext(), "No network connection.", Toast.LENGTH_SHORT).show();
@@ -256,7 +256,7 @@ public class SnappingActivity extends Activity implements OnClickListener{
     }
 
     // ------------------------ Network functions ----------------------------------
-    private boolean testNetwork(){
+    private boolean testConnectivity(){
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
 
