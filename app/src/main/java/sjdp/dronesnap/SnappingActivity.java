@@ -41,6 +41,7 @@ public class SnappingActivity extends Activity implements OnClickListener{
     private Camera mCamera;
     private CameraPreview mPreview;
     private SnapDisbatcher mSnapDisbatcher;
+    private DirectionListener mDirectionListener;
 
     // Widgets
     private TextView mNumSnapET = null;
@@ -58,6 +59,7 @@ public class SnappingActivity extends Activity implements OnClickListener{
         setParentIntentExtras();
 
         mSnapDisbatcher = new SnapDisbatcher(mSharedPrefs.getString(mRes.getString(R.string.shared_pref_url), ""));
+        mDirectionListener = new DirectionListener("144.39.173.186", 9150);
         mCamera = setCameraInstance();
         mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
@@ -156,6 +158,7 @@ public class SnappingActivity extends Activity implements OnClickListener{
             mCamera = null;
         }
         mSnapDisbatcher.stopDisbatching();
+        mDirectionListener.stopListening();
         Intent resultIntent = new Intent();
         resultIntent.putExtra(mRes.getString(R.string.intent_extra_flight_duration), mDurationOfFlight);
         resultIntent.putExtra(mRes.getString(R.string.intent_extra_snap_count), mNumberOfSnapsTaken);
@@ -163,7 +166,6 @@ public class SnappingActivity extends Activity implements OnClickListener{
         setResult(RESULT_OK, resultIntent);
         finish();
     }
-
 
     private void inflateWidgets() {
         mNumSnapET = (TextView) findViewById(R.id.stat_num_of_snaps);
@@ -188,6 +190,9 @@ public class SnappingActivity extends Activity implements OnClickListener{
         Camera c = null;
         try {
             c = Camera.open(); // attempt to get a Camera instance
+            Camera.Parameters params = c.getParameters();
+            params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            c.setParameters(params);
         } catch (Exception e) {
             Log.e(LOG_TAG, "Camera is not available or does not exist.");
             e.printStackTrace();
@@ -215,7 +220,14 @@ public class SnappingActivity extends Activity implements OnClickListener{
                 while (isSnapping) {
                     Log.d(LOG_TAG, "Attempting to take picture now.");
                     try {
-                        mCamera.takePicture(null, null, mPicture);
+//                        http://stackoverflow.com/questions/15623944/how-to-autofocus-android-camera-automatically
+                        mCamera.autoFocus(new Camera.AutoFocusCallback() {
+                            public void onAutoFocus(boolean success, Camera camera) {
+                                if (success) {
+                                    mCamera.takePicture(null, null, mPicture);
+                                }
+                            }
+                        });
 
                         Log.d(LOG_TAG, "Attempting to update snaps counter");
                         runOnUiThread(new Runnable() {
@@ -249,6 +261,7 @@ public class SnappingActivity extends Activity implements OnClickListener{
         //Once the picture thread is running and if the network exists, start sending the pictures!
         if(testConnectivity()) {
             mSnapDisbatcher.start();
+            mDirectionListener.start();
         } else {
             Toast.makeText(getApplicationContext(), "No network connection.", Toast.LENGTH_SHORT).show();
             stopSnapping();
@@ -265,13 +278,14 @@ public class SnappingActivity extends Activity implements OnClickListener{
     }
 
 
-    // ------------------------- TESTing FUNCTIONS ---------------------------
+    // ------------------------- TESTING FUNCTIONS ---------------------------
     private void savePicture(byte[] snap) {
         String storageDir = Environment.getExternalStorageDirectory().toString();
         String filepath = storageDir + "/test.jpg";
         try {
             FileOutputStream outstream = new FileOutputStream(filepath);
             outstream.write(snap, 0, snap.length);
+            outstream.close();
         } catch (Exception e) {
 
         }

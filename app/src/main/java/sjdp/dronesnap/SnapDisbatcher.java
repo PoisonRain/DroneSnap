@@ -15,6 +15,8 @@ import java.util.LinkedList;
 
 /**
  * Created by Samuel Poulton on 12/1/15.
+ * As pictures are taken, the SnapDisbatcher queues the byte arrays
+ * and as possible, uploads them to the CamParser server.
  */
 public class SnapDisbatcher extends Thread {
     static final private String LOG_TAG = "LOG_SEE_ME";
