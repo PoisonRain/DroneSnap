@@ -59,7 +59,7 @@ public class SnappingActivity extends Activity implements OnClickListener{
         setParentIntentExtras();
 
         mSnapDisbatcher = new SnapDisbatcher(mSharedPrefs.getString(mRes.getString(R.string.shared_pref_url), ""));
-        mDirectionListener = new DirectionListener("144.39.173.186", 9150);
+        mDirectionListener = new DirectionListener("144.39.170.108", 9150);
         mCamera = setCameraInstance();
         mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
@@ -229,7 +229,6 @@ public class SnappingActivity extends Activity implements OnClickListener{
                             }
                         });
 
-                        Log.d(LOG_TAG, "Attempting to update snaps counter");
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -243,7 +242,6 @@ public class SnappingActivity extends Activity implements OnClickListener{
                         Log.d(LOG_TAG, e.getMessage());
                     }
 
-                    Log.d(LOG_TAG, "Attempting to sleep now");
                     try {
                         sleep(mTimeLapseDelay);
                     }
@@ -259,11 +257,12 @@ public class SnappingActivity extends Activity implements OnClickListener{
 
         mCameraThread.start();
         //Once the picture thread is running and if the network exists, start sending the pictures!
+        // and listening for direction responses.
         if(testConnectivity()) {
             mSnapDisbatcher.start();
             mDirectionListener.start();
         } else {
-            Toast.makeText(getApplicationContext(), "No network connection.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "No network connection.", Toast.LENGTH_LONG).show();
             stopSnapping();
         }
     }

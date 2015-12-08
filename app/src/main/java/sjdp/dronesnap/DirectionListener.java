@@ -43,6 +43,7 @@ public class DirectionListener extends Thread {
             mSocketAddress = InetAddress.getByName(ip);
             mSocketPort = port;
             mServerSocket = new ServerSocket(mSocketPort, 100, mSocketAddress);
+            mDirectionResponse = new StringBuilder();
         } catch (Exception e) {
             Log.d(LOG_TAG, "Failed to create a DirectionListener");
             e.printStackTrace();
@@ -67,9 +68,9 @@ public class DirectionListener extends Thread {
 
     public void stopListening() {
         try {
+            isListening = false;
             mServerSocket.close();
             writeResponseToFile();
-            isListening = false;
         }
         catch (Exception e) {
             //already closed
@@ -78,13 +79,14 @@ public class DirectionListener extends Thread {
     }
 
     public void getMessage() throws IOException {
+        Log.d(LOG_TAG, "Attempting to getMessage");
         byte[] message = new byte[25];
         DataInputStream dataInputStream = new DataInputStream(mClientSocket.getInputStream());
 
         try {
             dataInputStream.read(message);
             Log.d(LOG_TAG, "The Response Message: " + message.toString());
-            mDirectionResponse.append(message + "\n");
+            mDirectionResponse.append(message.toString().trim() + "\n");
 
             // If the letter 'f' is received, the destination has been reached.
             if(message[0] == 'f'){ stopListening(); }
@@ -100,10 +102,10 @@ public class DirectionListener extends Thread {
             FileOutputStream fos = new FileOutputStream(filepath);
             fos.write(mDirectionResponse.toString().getBytes(), 0, mDirectionResponse.length());
             fos.close();
+            Log.d(LOG_TAG, "Response file created.");
         } catch (Exception e) {
+            Log.d(LOG_TAG, "Response file failed to be created");
             e.printStackTrace();
         }
-
-        Log.d(LOG_TAG, "Response file created.");
     }
 }
