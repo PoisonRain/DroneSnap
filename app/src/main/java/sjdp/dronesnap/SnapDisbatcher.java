@@ -1,5 +1,6 @@
 package sjdp.dronesnap;
 
+import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.util.Log;
@@ -26,9 +27,12 @@ public class SnapDisbatcher extends Thread {
     private Socket socket;
     private static int SERVER_PORT = 8150;
     private static String SERVER_IP;
+    private Application mApp;
 
-    public SnapDisbatcher(String ip){
+    public SnapDisbatcher(String ip, int port, Application application){
         SERVER_IP = ip;
+        SERVER_PORT = port;
+        mApp = application;
     }
 
     private byte[] dequeueSnap() {
@@ -79,11 +83,6 @@ public class SnapDisbatcher extends Thread {
             InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
             Log.d(LOG_TAG, "SERVER ADDRESS: " + serverAddr.toString());
             socket = new Socket(serverAddr, SERVER_PORT);
-
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e ) {
             e.printStackTrace();
         }

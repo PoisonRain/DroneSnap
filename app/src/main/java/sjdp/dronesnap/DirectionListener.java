@@ -4,6 +4,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -25,25 +26,21 @@ public class DirectionListener extends Thread {
     private int mSocketPort;
     private boolean isListening = true;
     private StringBuilder mDirectionResponse;
+    private String mResponseFilename;
 
-    public DirectionListener(InetAddress ip, int port) {
-        try {
-            mSocketAddress = ip;
-            mSocketPort = port;
-            mServerSocket = new ServerSocket(port, 100, ip);
-            mDirectionResponse = new StringBuilder();
-        } catch (Exception e) {
-            Log.d(LOG_TAG, "Failed to create a DirectionListener");
-            e.printStackTrace();
-        }
-    }
-
-    public DirectionListener(String ip, int port) {
+    /*
+    The flightname is used in the naming of the response file.
+     */
+    public DirectionListener(String ip, int port, String flightname) {
         try {
             mSocketAddress = InetAddress.getByName(ip);
             mSocketPort = port;
             mServerSocket = new ServerSocket(mSocketPort, 100, mSocketAddress);
             mDirectionResponse = new StringBuilder();
+            if(!flightname.isEmpty())
+                mResponseFilename = flightname;
+            else
+                mResponseFilename = "direction_responses";
         } catch (Exception e) {
             Log.d(LOG_TAG, "Failed to create a DirectionListener");
             e.printStackTrace();
@@ -71,25 +68,26 @@ public class DirectionListener extends Thread {
             isListening = false;
             mServerSocket.close();
             writeResponseToFile();
+            interrupt();
         }
         catch (Exception e) {
-            //already closed
             e.printStackTrace();
         }
     }
 
     public void getMessage() throws IOException {
         Log.d(LOG_TAG, "Attempting to getMessage");
-        byte[] message = new byte[25];
+        byte[] directionResponse = new byte[25];
         DataInputStream dataInputStream = new DataInputStream(mClientSocket.getInputStream());
 
         try {
-            dataInputStream.read(message);
-            Log.d(LOG_TAG, "The Response Message: " + message.toString());
-            mDirectionResponse.append(message.toString().trim() + "\n");
+            dataInputStream.read(directionResponse);
+            String responseString = new String(directionResponse).trim();
+            Log.d(LOG_TAG, "The Response Message: " + responseString);
+            mDirectionResponse.append(responseString + "\n");
 
             // If the letter 'f' is received, the destination has been reached.
-            if(message[0] == 'f'){ stopListening(); }
+//            if(responseString.charAt(0) == 'f'){ stopListening(); }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,9 +95,16 @@ public class DirectionListener extends Thread {
 
     private void writeResponseToFile() {
         String storageDir = Environment.getExternalStorageDirectory().toString();
-        String filepath = storageDir + "/direction_responses.txt";
+        String filepath = storageDir + "/" + mResponseFilename + ".txt";
         try {
-            FileOutputStream fos = new FileOutputStream(filepath);
+            File responseFile = new File(filepath);
+            FileOutputStream fos = new FileOutputStream(responseFile, true);
+
+            if(responseFile.exists()) {
+                String BREAKER = "---------------------------\n";
+                fos.write(BREAKER.getBytes(), 0, BREAKER.length());
+            }
+
             fos.write(mDirectionResponse.toString().getBytes(), 0, mDirectionResponse.length());
             fos.close();
             Log.d(LOG_TAG, "Response file created.");

@@ -29,6 +29,15 @@
                 android:value="sjdp.dronesnap.DroneSnapStartScreenActivity" />
         </activity>
         <activity
+            android:name=".CountDownTimerActivty"
+            android:label="@string/title_activity_count_down"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".DroneSnapStartScreenActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sjdp.dronesnap.DroneSnapStartScreenActivity" />
+        </activity>
+        <activity
             android:name=".SnappingActivity"
             android:label="@string/title_activity_snapping"
             android:screenOrientation="portrait"

@@ -6,10 +6,11 @@
     <string name="intent_extra_flight_duration">flight_duration</string>
     <string name="intent_extra_snap_count">snap_count</string>
 
-    <string name="shared_pref_url">serverURL</string>
-    <string name="shared_pref_username">serverUsername</string>
-    <string name="shared_pref_password">serverPassword</string>
-    
+    <string name="shared_pref_server_url">serverURL</string>
+    <string name="shared_pref_server_port">serverPort</string>
+    <string name="shared_pref_phone_url">phoneURL</string>
+    <string name="shared_pref_phone_port">phonePort</string>
+
     <!-- Main Activity-->
     <string name="start_screen_logo">Ðґ◎ηℯ$ηα℘</string>
     <string name="action_settings">Settings</string>
@@ -21,23 +22,24 @@
     <string name="start_btn">Start</string>
     <string name="server_settings_btn">Server Settings</string>
     
-
+    <!-- Count Down Timer Activity -->
+    <string name="count_down_timer_logo">Snapping In</string>
+    <string name="title_activity_count_down">Count Down Timer</string>
 
     <!-- Server Settings Activity-->
     <string name="server_setting_logo">Server Settings</string>
     <string name="title_activity_server_settings">Server Settings</string>
-    <string name="url_etLabel">URL</string>
-    <string name="username_etLabel">Username</string>
-    <string name="password_etLabel">Password</string>
-
+    <string name="server_url_etLabel">Server URL</string>
+    <string name="server_port_etLabel">Server Port</string>
+    <string name="phone_url_etLabel">Phone URL</string>
+    <string name="phone_port_etLabel">Phone Port</string>
     <string name="server_settings_okay_btn">Okay</string>
-    <string name="title_activity_snapping">SnappingActivity</string>
 
     <!-- Snapping Activity-->
+    <string name="title_activity_snapping">SnappingActivity</string>
     <string name="snapping_logo">Snap Stats</string>
     <string name="snapping_stat_num_of_snaps">Number of Snaps taken:</string>
     <string name="snapping_stat_flight_dura">Flight Duration:</string>
-    <string name="pause_btn">Pause</string>
     <string name="stop_btn">Stop</string>
 
 </resources>

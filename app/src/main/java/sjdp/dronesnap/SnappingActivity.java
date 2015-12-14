@@ -19,7 +19,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
-
 import java.io.FileOutputStream;
 
 /**
@@ -31,10 +30,10 @@ public class SnappingActivity extends Activity implements OnClickListener{
 
     private int mNumberOfSnapsTaken = 0;
     private String mFlightName = "";
-    private int mInitialDelayedStart = 0;
     private long mTimeLapseDelay = 0;
     private boolean isSnapping = true;
     private long mDurationOfFlight = 0;
+
     private Resources mRes = null;
     private SharedPreferences mSharedPrefs = null;
     private Thread mCameraThread = null;
@@ -43,10 +42,15 @@ public class SnappingActivity extends Activity implements OnClickListener{
     private SnapDisbatcher mSnapDisbatcher;
     private DirectionListener mDirectionListener;
 
+    // TCP address & ports
+    private String mServerURL;
+    private int    mServerPort;
+    private String mPhoneURL;
+    private int    mPhonePort;
+
     // Widgets
     private TextView mNumSnapET = null;
     private Chronometer mFlightDuraChrono = null;
-    private Button mPauseResumeBtn = null;
     private Button mStopBtn = null;
 
     @Override
@@ -57,9 +61,11 @@ public class SnappingActivity extends Activity implements OnClickListener{
         mSharedPrefs = getSharedPreferences(PREFS_FILE, MODE_PRIVATE);
         inflateWidgets();
         setParentIntentExtras();
+        setNetworkSharedPrefs();
 
-        mSnapDisbatcher = new SnapDisbatcher(mSharedPrefs.getString(mRes.getString(R.string.shared_pref_url), ""));
-        mDirectionListener = new DirectionListener("144.39.170.108", 9150);
+        mSnapDisbatcher = new SnapDisbatcher(mServerURL, mServerPort, getApplication());
+        // Android Phone IP Address
+        mDirectionListener = new DirectionListener(mPhoneURL, mPhonePort, mFlightName);
         mCamera = setCameraInstance();
         mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
@@ -90,12 +96,6 @@ public class SnappingActivity extends Activity implements OnClickListener{
     public void onClick(View v) {
         Log.d(LOG_TAG, "onclicked fired");
         switch(v.getId()) {
-            case R.id.pause_resume_btn:
-                if(isSnapping)
-                    pauseSnapping();
-                else
-                    resumeSnapping();
-                break;
             case R.id.stop_btn:
                 stopSnapping();
                 break;
@@ -107,22 +107,10 @@ public class SnappingActivity extends Activity implements OnClickListener{
 
         mFlightDuraChrono.setBase(SystemClock.elapsedRealtime());
         mNumSnapET.setText("0");
-
-        if(mInitialDelayedStart > 0) {
-            try {
-                //Convert minutes to milliseconds
-                //TODO: Change this to a count down timer of some sort
-                // Potential use a Handler: http://stackoverflow.com/questions/6242268/repeat-a-task-with-a-time-delay
-                Thread.sleep(mInitialDelayedStart * 60 * 1000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void resumeSnapping(){
         Log.d(LOG_TAG, "resumeSnapping");
-        mPauseResumeBtn.setText(mRes.getString(R.string.pause_btn));
 
         if(mCamera == null)
             mCamera = setCameraInstance();
@@ -139,7 +127,6 @@ public class SnappingActivity extends Activity implements OnClickListener{
         mFlightDuraChrono.stop();
         mDurationOfFlight =  SystemClock.elapsedRealtime() - mFlightDuraChrono.getBase();
 
-        mPauseResumeBtn.setText(mRes.getString(R.string.start_btn));
         isSnapping = false;
         if(mCamera != null) {
             mCamera.release();
@@ -171,9 +158,6 @@ public class SnappingActivity extends Activity implements OnClickListener{
         mNumSnapET = (TextView) findViewById(R.id.stat_num_of_snaps);
         mFlightDuraChrono = (Chronometer) findViewById(R.id.stat_flight_duration);
 
-        mPauseResumeBtn = (Button) findViewById(R.id.pause_resume_btn);
-        mPauseResumeBtn.setOnClickListener(this);
-
         mStopBtn = (Button) findViewById(R.id.stop_btn);
         mStopBtn.setOnClickListener(this);
     }
@@ -181,8 +165,15 @@ public class SnappingActivity extends Activity implements OnClickListener{
     private void setParentIntentExtras() {
         Intent parentRequester = this.getIntent();
         mFlightName = parentRequester.getStringExtra(mRes.getString(R.string.intent_extra_flight_name));
-        mInitialDelayedStart = parentRequester.getIntExtra(mRes.getString(R.string.intent_extra_delayed_start), 0);
         mTimeLapseDelay = parentRequester.getLongExtra(mRes.getString(R.string.intent_extra_time_lapse), 1000);
+    }
+
+    private void setNetworkSharedPrefs() {
+        mServerURL = mSharedPrefs.getString(mRes.getString(R.string.shared_pref_server_url), "");
+        mServerPort = Integer.parseInt(mSharedPrefs.getString(mRes.getString(R.string.shared_pref_server_port), "8150"));
+
+        mPhoneURL = mSharedPrefs.getString(mRes.getString(R.string.shared_pref_phone_url), "");
+        mPhonePort = Integer.parseInt(mSharedPrefs.getString(mRes.getString(R.string.shared_pref_phone_port), "9150"));
     }
 
     // ---------------------------- CAMERA FUNCTIONS ----------------------------------

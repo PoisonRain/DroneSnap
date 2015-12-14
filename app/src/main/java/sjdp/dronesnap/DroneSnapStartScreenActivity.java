@@ -47,22 +47,7 @@ public class DroneSnapStartScreenActivity extends Activity {
         mStartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), SnappingActivity.class);
-                i.putExtra(
-                        mRes.getString(R.string.intent_extra_flight_name),
-                        mFlightName.getText().toString());
-                i.putExtra(
-                        mRes.getString(R.string.intent_extra_delayed_start),
-                        Integer.parseInt(mDelayedStart.getText().toString()));
-                i.putExtra(
-                        mRes.getString(R.string.intent_extra_time_lapse),
-                        Long.parseLong(mTimeLapse.getText().toString()));
-
-                try {
-                    startActivityForResult(i, SNAP_STATS_REQUEST_CODE);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                onStartButton();
             }
         });
 
@@ -92,6 +77,35 @@ public class DroneSnapStartScreenActivity extends Activity {
             String result = "Flight Duration: " + flightDuration + "\n Total Snaps: " + snapCount;
 
             Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // Called when the Start button is pressed.
+    private void onStartButton(){
+        Intent intent;
+
+        // If there is no delay, start Snapping Activity
+        if(mDelayedStart.getText().toString() == "0") {
+            intent = new Intent(getApplicationContext(), SnappingActivity.class);
+        } else {
+            // Start countdown timer
+            intent = new Intent(getApplicationContext(), CountDownTimerActivty.class);
+        }
+
+        intent.putExtra( // Flight Name
+                mRes.getString(R.string.intent_extra_flight_name),
+                mFlightName.getText().toString());
+        intent.putExtra( // Delayed Start (min)
+                mRes.getString(R.string.intent_extra_delayed_start),
+                Integer.parseInt(mDelayedStart.getText().toString()));
+        intent.putExtra( // Time Lapse (milli)
+                mRes.getString(R.string.intent_extra_time_lapse),
+                Long.parseLong(mTimeLapse.getText().toString()));
+
+        try {
+            startActivityForResult(intent, SNAP_STATS_REQUEST_CODE);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
